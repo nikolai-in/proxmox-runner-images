@@ -90,17 +90,6 @@ variable "imagedata_file" {
   default = "C:\\imagedata.json"
 }
 
-variable "install_password" {
-  type      = string
-  default   = ""
-  sensitive = true
-}
-
-variable "install_user" {
-  type    = string
-  default = "installer"
-}
-
 variable "vm_name" {
   type        = string
   description = "The name of the VM to create"
@@ -131,14 +120,17 @@ source "proxmox-clone" "windows" {
   template_name            = "${var.vm_name}"
   username                 = "${var.proxmox_username}"
   vm_name                  = "${var.vm_name}"
+  os                       = "win10"
+  cores                    = 2
+  memory                   = 8192
   qemu_agent               = true
   communicator             = "winrm"
   winrm_insecure           = true
   winrm_no_proxy           = true
-  winrm_password           = "${var.install_password}"
+  winrm_password           = "${var.winrm_password}"
   winrm_timeout            = "120m"
   winrm_use_ssl            = true
-  winrm_username           = "${var.install_user}"
+  winrm_username           = "${var.winrm_username}"
   full_clone               = "${var.full_clone}"
   task_timeout             = "40m"
 }
@@ -181,20 +173,20 @@ build {
 
   provisioner "windows-shell" {
     inline = [
-      "net user ${var.install_user} ${var.install_password} /add /passwordchg:no /passwordreq:yes /active:yes /Y",
-      "net localgroup Administrators ${var.install_user} /add",
+      "net user ${var.winrm_username} ${var.winrm_password} /add /passwordchg:no /passwordreq:yes /active:yes /Y",
+      "net localgroup Administrators ${var.winrm_username} /add",
       "winrm set winrm/config/service/auth @{Basic=\"true\"}",
       "winrm get winrm/config/service/auth"
     ]
   }
 
   provisioner "powershell" {
-    inline = ["if (-not ((net localgroup Administrators) -contains '${var.install_user}')) { exit 1 }"]
+    inline = ["if (-not ((net localgroup Administrators) -contains '${var.winrm_username}')) { exit 1 }"]
   }
 
   provisioner "powershell" {
-    elevated_password = "${var.install_password}"
-    elevated_user     = "${var.install_user}"
+    elevated_password = "${var.winrm_password}"
+    elevated_user     = "${var.winrm_username}"
     inline            = ["bcdedit.exe /set TESTSIGNING ON"]
   }
 
@@ -242,8 +234,8 @@ build {
   }
 
   provisioner "powershell" {
-    elevated_password = "${var.install_password}"
-    elevated_user     = "${var.install_user}"
+    elevated_password = "${var.winrm_password}"
+    elevated_user     = "${var.winrm_username}"
     environment_vars  = ["IMAGE_FOLDER=${var.image_folder}"]
     scripts = [
       "${path.root}/../scripts/build/Install-VisualStudio.ps1",
@@ -340,8 +332,8 @@ build {
   }
 
   provisioner "powershell" {
-    elevated_password = "${var.install_password}"
-    elevated_user     = "${var.install_user}"
+    elevated_password = "${var.winrm_password}"
+    elevated_user     = "${var.winrm_username}"
     environment_vars  = ["IMAGE_FOLDER=${var.image_folder}"]
     scripts = [
       "${path.root}/../scripts/build/Install-WindowsUpdates.ps1",
@@ -394,7 +386,7 @@ build {
   }
 
   provisioner "powershell" {
-    environment_vars = ["INSTALL_USER=${var.install_user}"]
+    environment_vars = ["winrm_username=${var.winrm_username}"]
     scripts = [
       "${path.root}/../scripts/build/Install-NativeImages.ps1",
       "${path.root}/../scripts/build/Configure-System.ps1",
