@@ -7,44 +7,9 @@ packer {
   }
 }
 
-locals {
-  managed_image_name = var.managed_image_name != "" ? var.managed_image_name : "packer-${var.image_os}-${var.image_version}"
-}
-
 variable "agent_tools_directory" {
   type    = string
   default = "C:\\hostedtoolcache\\windows"
-}
-
-variable "allowed_inbound_ip_addresses" {
-  type    = list(string)
-  default = []
-}
-
-variable "azure_tags" {
-  type    = map(string)
-  default = {}
-}
-
-variable "build_resource_group_name" {
-  type    = string
-  default = "${env("BUILD_RESOURCE_GROUP_NAME")}"
-}
-
-variable "client_cert_path" {
-  type    = string
-  default = "${env("ARM_CLIENT_CERT_PATH")}"
-}
-
-variable "client_id" {
-  type    = string
-  default = "${env("ARM_CLIENT_ID")}"
-}
-
-variable "client_secret" {
-  type      = string
-  default   = "${env("ARM_CLIENT_SECRET")}"
-  sensitive = true
 }
 
 variable "helper_script_folder" {
@@ -83,107 +48,78 @@ variable "install_user" {
   default = "installer"
 }
 
-variable "location" {
-  type    = string
-  default = "${env("ARM_RESOURCE_LOCATION")}"
-}
+variable "proxmox_url" {}
+variable "proxmox_username" {}
+variable "proxmox_password" {}
+variable "proxmox_skip_tls_verify" {}
+variable "proxmox_node" {}
+variable "proxmox_pool" {}
+variable "proxmox_vm_storage" {}
+variable "proxmox_iso_storage" {}
+variable "vm_name" {}
+variable "template_description" {}
+variable "iso_file" {}
+variable "autounattend_iso" {}
+variable "autounattend_checksum" {}
+variable "vm_cpu_cores" {}
+variable "vm_memory" {}
+variable "vm_disk_size" {}
+variable "vm_disk_format" {}
+variable "vm_sockets" {}
 
-variable "managed_image_name" {
-  type    = string
-  default = ""
-}
-
-variable "managed_image_resource_group_name" {
-  type    = string
-  default = "${env("ARM_RESOURCE_GROUP")}"
-}
-
-variable "managed_image_storage_account_type" {
-  type    = string
-  default = "Premium_LRS"
-}
-
-variable "object_id" {
-  type    = string
-  default = "${env("ARM_OBJECT_ID")}"
-}
-
-variable "private_virtual_network_with_public_ip" {
-  type    = bool
-  default = false
-}
-
-variable "subscription_id" {
-  type    = string
-  default = "${env("ARM_SUBSCRIPTION_ID")}"
-}
-
-variable "temp_resource_group_name" {
-  type    = string
-  default = "${env("TEMP_RESOURCE_GROUP_NAME")}"
-}
-
-variable "tenant_id" {
-  type    = string
-  default = "${env("ARM_TENANT_ID")}"
-}
-
-variable "virtual_network_name" {
-  type    = string
-  default = "${env("VNET_NAME")}"
-}
-
-variable "virtual_network_resource_group_name" {
-  type    = string
-  default = "${env("VNET_RESOURCE_GROUP")}"
-}
-
-variable "virtual_network_subnet_name" {
-  type    = string
-  default = "${env("VNET_SUBNET")}"
-}
-
-variable "vm_size" {
-  type    = string
-  default = "Standard_F8s_v2"
-}
-
-source "azure-arm" "image" {
-  allowed_inbound_ip_addresses           = "${var.allowed_inbound_ip_addresses}"
-  build_resource_group_name              = "${var.build_resource_group_name}"
-  client_cert_path                       = "${var.client_cert_path}"
-  client_id                              = "${var.client_id}"
-  client_secret                          = "${var.client_secret}"
-  communicator                           = "winrm"
-  image_offer                            = "WindowsServer"
-  image_publisher                        = "MicrosoftWindowsServer"
-  image_sku                              = "2022-Datacenter"
-  location                               = "${var.location}"
-  managed_image_name                     = "${local.managed_image_name}"
-  managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"
-  managed_image_storage_account_type     = "${var.managed_image_storage_account_type}"
-  object_id                              = "${var.object_id}"
-  os_disk_size_gb                        = "256"
-  os_type                                = "Windows"
-  private_virtual_network_with_public_ip = "${var.private_virtual_network_with_public_ip}"
-  subscription_id                        = "${var.subscription_id}"
-  temp_resource_group_name               = "${var.temp_resource_group_name}"
-  tenant_id                              = "${var.tenant_id}"
-  virtual_network_name                   = "${var.virtual_network_name}"
-  virtual_network_resource_group_name    = "${var.virtual_network_resource_group_name}"
-  virtual_network_subnet_name            = "${var.virtual_network_subnet_name}"
-  vm_size                                = "${var.vm_size}"
-  winrm_insecure                         = "true"
-  winrm_use_ssl                          = "true"
-  winrm_username                         = "packer"
-
-  dynamic "azure_tag" {
-    for_each = var.azure_tags
-    content {
-      name  = azure_tag.key
-      value = azure_tag.value
-    }
+source "proxmox-iso" "windows" {
+  additional_iso_files {
+    device           = "sata3"
+    iso_checksum     = "${var.autounattend_checksum}"
+    iso_storage_pool = "local"
+    iso_url          = "${var.autounattend_iso}"
+    unmount          = true
   }
+  additional_iso_files {
+    device   = "sata4"
+    iso_file = "local:iso/virtio-win.iso"
+    unmount  = true
+  }
+  additional_iso_files {
+    device   = "sata5"
+    iso_file = "local:iso/scripts_withcloudinit.iso"
+    unmount  = true
+  }
+  cloud_init              = true
+  cloud_init_storage_pool = "${var.proxmox_iso_storage}"
+  communicator            = "winrm"
+  cores                   = "${var.vm_cpu_cores}"
+  cpu_type                = "host"
+  disks {
+    disk_size    = "${var.vm_disk_size}"
+    format       = "${var.vm_disk_format}"
+    storage_pool = "${var.proxmox_vm_storage}"
+    type         = "sata"
+  }
+  insecure_skip_tls_verify = "${var.proxmox_skip_tls_verify}"
+  iso_file                 = "${var.iso_file}"
+  memory                   = "${var.vm_memory}"
+  network_adapters {
+    bridge = "vnet0"
+    model  = "virtio"
+  }
+  node                 = "${var.proxmox_node}"
+  os                   = "${var.os}"
+  password             = "${var.proxmox_password}"
+  pool                 = "${var.proxmox_pool}"
+  proxmox_url          = "${var.proxmox_url}"
+  sockets              = "${var.vm_sockets}"
+  template_description = "${var.template_description}"
+  template_name        = "${var.vm_name}"
+  username             = "${var.proxmox_username}"
+  vm_name              = "${var.vm_name}"
+  winrm_insecure       = true
+  winrm_no_proxy       = true
+  winrm_password       = "${var.install_password}"
+  winrm_timeout        = "120m"
+  winrm_use_ssl        = true
+  winrm_username       = "${var.install_user}"
+  task_timeout         = "40m"
 }
 
 build {
