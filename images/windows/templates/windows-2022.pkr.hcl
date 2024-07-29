@@ -7,6 +7,59 @@ packer {
   }
 }
 
+variable "proxmox_url" {
+  type        = string
+  description = "The URL of the Proxmox server"
+}
+
+variable "proxmox_username" {
+  type        = string
+  description = "The username to authenticate with the Proxmox server"
+}
+
+variable "proxmox_password" {
+  type        = string
+  description = "The password to authenticate with the Proxmox server"
+  sensitive   = true
+}
+
+variable "proxmox_skip_tls_verify" {
+  type        = bool
+  default     = false
+  description = "Skip TLS verification when connecting to the Proxmox server"
+}
+
+variable "proxmox_node" {
+  type        = string
+  default     = "pve"
+  description = "The Proxmox node to use"
+}
+
+variable "proxmox_pool" {
+  type        = string
+  default     = "local"
+  description = "The Proxmox pool to use"
+}
+
+variable "proxmox_vm_storage" {
+  type        = string
+  default     = "local-lvm"
+  description = "The Proxmox storage to use for the VM"
+}
+
+variable "winrm_username" {
+  type        = string
+  default     = "runner"
+  description = "The username to authenticate with the WinRM service"
+}
+
+variable "winrm_password" {
+  type        = string
+  default     = "runner"
+  description = "The password to authenticate with the WinRM service"
+  sensitive   = true
+}
+
 variable "agent_tools_directory" {
   type    = string
   default = "C:\\hostedtoolcache\\windows"
@@ -48,71 +101,30 @@ variable "install_user" {
   default = "installer"
 }
 
-variable "proxmox_url" {}
-variable "proxmox_username" {}
-variable "proxmox_password" {}
-variable "proxmox_skip_tls_verify" {}
-variable "proxmox_node" {}
-variable "proxmox_pool" {}
-variable "proxmox_vm_storage" {}
-variable "proxmox_iso_storage" {}
-variable "vm_name" {}
-variable "template_description" {}
-variable "iso_file" {}
-variable "autounattend_iso" {}
-variable "autounattend_checksum" {}
-variable "vm_cpu_cores" {}
-variable "vm_memory" {}
-variable "vm_disk_size" {}
-variable "vm_disk_format" {}
-variable "vm_sockets" {}
+variable "vm_name" {
+  type        = string
+  description = "The name of the VM to create"
+  default     = "runner-2022-full"
+}
 
-source "proxmox-iso" "windows" {
-  additional_iso_files {
-    device           = "sata3"
-    iso_checksum     = "${var.autounattend_checksum}"
-    iso_storage_pool = "local"
-    iso_url          = "${var.autounattend_iso}"
-    unmount          = true
-  }
-  additional_iso_files {
-    device   = "sata4"
-    iso_file = "local:iso/virtio-win.iso"
-    unmount  = true
-  }
-  additional_iso_files {
-    device   = "sata5"
-    iso_file = "local:iso/scripts_withcloudinit.iso"
-    unmount  = true
-  }
-  cloud_init              = true
-  cloud_init_storage_pool = "${var.proxmox_iso_storage}"
-  communicator            = "winrm"
-  cores                   = "${var.vm_cpu_cores}"
-  cpu_type                = "host"
-  disks {
-    disk_size    = "${var.vm_disk_size}"
-    format       = "${var.vm_disk_format}"
-    storage_pool = "${var.proxmox_vm_storage}"
-    type         = "sata"
-  }
-  insecure_skip_tls_verify = "${var.proxmox_skip_tls_verify}"
-  iso_file                 = "${var.iso_file}"
-  memory                   = "${var.vm_memory}"
-  network_adapters {
-    bridge = "vnet0"
-    model  = "virtio"
-  }
+variable "template_description" {
+  type        = string
+  default     = "Windows Server 2022 {{timestamp}}"
+  description = "The description of the template"
+}
+
+source "proxmox-clone" "windows" {
+  clone_vm = "runner-2022"
+
   node                 = "${var.proxmox_node}"
-  os                   = "${var.os}"
   password             = "${var.proxmox_password}"
   pool                 = "${var.proxmox_pool}"
   proxmox_url          = "${var.proxmox_url}"
-  sockets              = "${var.vm_sockets}"
   template_description = "${var.template_description}"
   template_name        = "${var.vm_name}"
   username             = "${var.proxmox_username}"
   vm_name              = "${var.vm_name}"
+  qemu_agent           = true
   winrm_insecure       = true
   winrm_no_proxy       = true
   winrm_password       = "${var.install_password}"
@@ -123,7 +135,7 @@ source "proxmox-iso" "windows" {
 }
 
 build {
-  sources = ["source.azure-arm.image"]
+  sources = ["source.proxmox-clone.windows"]
 
   provisioner "powershell" {
     inline = ["New-Item -Path ${var.image_folder} -ItemType Directory -Force"]
