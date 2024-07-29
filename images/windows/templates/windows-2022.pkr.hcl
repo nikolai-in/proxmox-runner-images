@@ -125,6 +125,7 @@ source "proxmox-clone" "windows" {
   username             = "${var.proxmox_username}"
   vm_name              = "${var.vm_name}"
   qemu_agent           = true
+  communicator         = "winrm"
   winrm_insecure       = true
   winrm_no_proxy       = true
   winrm_password       = "${var.install_password}"
