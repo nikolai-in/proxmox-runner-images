@@ -113,6 +113,12 @@ variable "template_description" {
   description = "The description of the template"
 }
 
+variable "full_clone" {
+  type        = bool
+  default     = false
+  description = "Whether to create a full clone of the VM"
+}
+
 source "proxmox-clone" "windows" {
   clone_vm = "runner-2022"
 
@@ -133,6 +139,7 @@ source "proxmox-clone" "windows" {
   winrm_timeout            = "120m"
   winrm_use_ssl            = true
   winrm_username           = "${var.install_user}"
+  full_clone               = "${var.full_clone}"
   task_timeout             = "40m"
 }
 
