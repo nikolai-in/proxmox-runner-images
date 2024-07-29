@@ -116,23 +116,24 @@ variable "template_description" {
 source "proxmox-clone" "windows" {
   clone_vm = "runner-2022"
 
-  node                 = "${var.proxmox_node}"
-  password             = "${var.proxmox_password}"
-  pool                 = "${var.proxmox_pool}"
-  proxmox_url          = "${var.proxmox_url}"
-  template_description = "${var.template_description}"
-  template_name        = "${var.vm_name}"
-  username             = "${var.proxmox_username}"
-  vm_name              = "${var.vm_name}"
-  qemu_agent           = true
-  communicator         = "winrm"
-  winrm_insecure       = true
-  winrm_no_proxy       = true
-  winrm_password       = "${var.install_password}"
-  winrm_timeout        = "120m"
-  winrm_use_ssl        = true
-  winrm_username       = "${var.install_user}"
-  task_timeout         = "40m"
+  node                     = "${var.proxmox_node}"
+  password                 = "${var.proxmox_password}"
+  pool                     = "${var.proxmox_pool}"
+  proxmox_url              = "${var.proxmox_url}"
+  insecure_skip_tls_verify = "${var.proxmox_skip_tls_verify}"
+  template_description     = "${var.template_description}"
+  template_name            = "${var.vm_name}"
+  username                 = "${var.proxmox_username}"
+  vm_name                  = "${var.vm_name}"
+  qemu_agent               = true
+  communicator             = "winrm"
+  winrm_insecure           = true
+  winrm_no_proxy           = true
+  winrm_password           = "${var.install_password}"
+  winrm_timeout            = "120m"
+  winrm_use_ssl            = true
+  winrm_username           = "${var.install_user}"
+  task_timeout             = "40m"
 }
 
 build {
