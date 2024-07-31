@@ -121,6 +121,7 @@ source "proxmox-clone" "windows" {
   username                 = "${var.proxmox_username}"
   vm_name                  = "${var.vm_name}"
   os                       = "win10"
+  cpu_type                 = "host"
   cores                    = 2
   memory                   = 8192
   qemu_agent               = true
