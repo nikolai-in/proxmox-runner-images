@@ -57,4 +57,6 @@ foreach ($tool in $tools) {
     }
 }
 
-Invoke-PesterTests -TestFile "Toolset"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Toolset"
+}

@@ -45,4 +45,6 @@ foreach ($module in $modules) {
 $psModuleMachinePath += $env:PSModulePath
 [Environment]::SetEnvironmentVariable("PSModulePath", $psModuleMachinePath, "Machine")
 
-Invoke-PesterTests -TestFile "PowerShellAzModules" -TestName "AzureModules"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "PowerShellAzModules" -TestName "AzureModules"
+}

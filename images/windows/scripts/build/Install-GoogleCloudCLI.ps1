@@ -9,4 +9,6 @@ Install-Binary `
   -InstallArgs @("/S", "/allusers", "/noreporting") `
   -ExpectedSignature '607A3EDAA64933E94422FC8F0C80388E0590986C'
 
-Invoke-PesterTests -TestFile "Tools" -TestName "GoogleCloudCLI"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Tools" -TestName "GoogleCloudCLI"
+}

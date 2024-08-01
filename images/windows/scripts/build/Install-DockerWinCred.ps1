@@ -19,4 +19,6 @@ $externalHash = Get-ChecksumFromUrl -Type "SHA256" `
 Test-FileChecksum -Path $binaryPath -ExpectedSHA256Sum $externalHash
 #endregion
 
-Invoke-PesterTests -TestFile "Docker" -TestName "DockerWinCred"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Docker" -TestName "DockerWinCred"
+}

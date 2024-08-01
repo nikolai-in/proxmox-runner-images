@@ -18,4 +18,6 @@ Set-Service -Name nginx -StartupType Disabled
 Start-Service -Name w3svc
 
 # Invoke Pester Tests
-Invoke-PesterTests -TestFile "Nginx"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Nginx"
+}

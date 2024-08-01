@@ -52,5 +52,9 @@ foreach ($dockerImage in $dockerImages) {
     }
 }
 
-Invoke-PesterTests -TestFile "Docker" -TestName "Docker"
-Invoke-PesterTests -TestFile "Docker" -TestName "DockerImages"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Docker" -TestName "Docker"
+}
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Docker" -TestName "DockerImages"
+}

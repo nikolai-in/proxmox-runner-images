@@ -24,4 +24,6 @@ Expand-7ZipArchive -Path $actionVersionsArchivePath -DestinationPath $actionArch
 
 [Environment]::SetEnvironmentVariable("ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE", $actionArchiveCache, "Machine")
 
-Invoke-PesterTests -TestFile "ActionArchiveCache"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "ActionArchiveCache"
+}

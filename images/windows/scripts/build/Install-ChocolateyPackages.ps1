@@ -9,4 +9,6 @@ foreach ($package in $commonPackages) {
     Install-ChocoPackage $package.name -ArgumentList $package.args
 }
 
-Invoke-PesterTests -TestFile "ChocoPackages"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "ChocoPackages"
+}

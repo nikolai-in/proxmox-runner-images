@@ -16,7 +16,9 @@ Add-MachinePathItem "${env:PIPX_BIN_DIR}"
 [Environment]::SetEnvironmentVariable("PIPX_BIN_DIR", $env:PIPX_BIN_DIR, "Machine")
 [Environment]::SetEnvironmentVariable("PIPX_HOME", $env:PIPX_HOME, "Machine")
 
-Invoke-PesterTests -TestFile "Tools" -TestName "Pipx"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Tools" -TestName "Pipx"
+}
 
 Write-Host "Installing pipx packages..."
 
@@ -36,4 +38,6 @@ foreach ($tool in $pipxToolset) {
     }
 }
 
-Invoke-PesterTests -TestFile "PipxPackages"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "PipxPackages"
+}

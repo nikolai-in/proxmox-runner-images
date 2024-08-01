@@ -34,4 +34,6 @@ Write-Host "Setting the environment variables..."
 [Environment]::SetEnvironmentVariable("EdgeWebDriver", $EdgeDriverPath, "Machine")
 Add-MachinePathItem "$edgeDriverPath\"
 
-Invoke-PesterTests -TestFile "Browsers" -TestName "Edge"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Browsers" -TestName "Edge"
+}

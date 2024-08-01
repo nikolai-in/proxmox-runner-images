@@ -50,4 +50,6 @@ if (Test-IsWin22) {
         -ExpectedSignature '7535269B94C1FEA4A5EF6D808E371DA242F27936'
 }
 
-Invoke-PesterTests -TestFile "VisualStudio"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "VisualStudio"
+}

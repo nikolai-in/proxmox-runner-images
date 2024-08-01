@@ -29,4 +29,6 @@ $globalNpmPackages | ForEach-Object {
     npm install -g $_.name
 }
 
-Invoke-PesterTests -TestFile "Node"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Node"
+}

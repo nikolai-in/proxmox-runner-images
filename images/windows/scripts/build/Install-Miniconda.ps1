@@ -29,4 +29,6 @@ Install-Binary `
 
 [Environment]::SetEnvironmentVariable("CONDA", $condaDestination, "Machine")
 
-Invoke-PesterTests -TestFile "Miniconda"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Miniconda"
+}

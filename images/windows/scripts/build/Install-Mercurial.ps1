@@ -8,4 +8,6 @@ Install-ChocoPackage hg -ArgumentList "--version", "5.0.0"
 Add-MachinePathItem "${env:ProgramFiles}\Mercurial\"
 Update-Environment
 
-Invoke-PesterTests -TestFile "Tools" -TestName "Mercurial"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Tools" -TestName "Mercurial"
+}

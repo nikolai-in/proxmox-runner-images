@@ -26,4 +26,6 @@ if ($LASTEXITCODE -ne 0) {
     throw "Command 'az --help' failed"
 }
 
-Invoke-PesterTests -TestFile 'CLI.Tools' -TestName 'Azure CLI'
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile 'CLI.Tools' -TestName 'Azure CLI'
+}

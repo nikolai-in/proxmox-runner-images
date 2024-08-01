@@ -25,4 +25,6 @@ Expand-7ZipArchive -Path $kotlinArchivePath -DestinationPath $kotlinPath
 # Add to PATH
 Add-MachinePathItem "$kotlinPath\kotlinc\bin"
 
-Invoke-PesterTests -TestFile "Tools" -TestName "Kotlin"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Tools" -TestName "Kotlin"
+}

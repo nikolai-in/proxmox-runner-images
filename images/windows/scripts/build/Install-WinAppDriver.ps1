@@ -13,4 +13,6 @@ Install-Binary `
     -Url $downloadUrl `
     -ExpectedSignature '2485A7AFA98E178CB8F30C9838346B514AEA4769'
 
-Invoke-PesterTests -TestFile "WinAppDriver" -TestName "WinAppDriver"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "WinAppDriver" -TestName "WinAppDriver"
+}

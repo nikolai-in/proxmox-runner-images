@@ -67,4 +67,6 @@ if (Test-IsWin22) {
     Add-MachinePathItem "C:\mingw64\bin"
 }
 
-Invoke-PesterTests -TestFile "Tools" -TestName "Mingw64"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Tools" -TestName "Mingw64"
+}

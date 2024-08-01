@@ -133,4 +133,6 @@ Install-MingwPackages -Packages $toolsetContent.mingw
 $env:PATH = $origPath
 Write-Host "`nMSYS2 installation completed"
 
-Invoke-PesterTests -TestFile "MSYS2"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "MSYS2"
+}

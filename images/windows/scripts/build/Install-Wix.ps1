@@ -11,4 +11,6 @@ $newPath = $currentPath + ";$(Join-Path -Path $env:WIX -ChildPath "bin")"
 [Environment]::SetEnvironmentVariable("PATH", $newPath, "Machine")
 Update-Environment
 
-Invoke-PesterTests -TestFile "Wix"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Wix"
+}

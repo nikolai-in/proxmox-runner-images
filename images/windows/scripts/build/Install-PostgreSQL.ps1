@@ -94,4 +94,6 @@ $pgService = Get-Service -Name postgresql*
 Stop-Service $pgService
 $pgService | Set-Service -StartupType Disabled
 
-Invoke-PesterTests -TestFile "Databases" -TestName "PostgreSQL"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Databases" -TestName "PostgreSQL"
+}

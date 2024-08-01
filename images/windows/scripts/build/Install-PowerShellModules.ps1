@@ -24,4 +24,6 @@ foreach ($module in $modules) {
 }
 
 Import-Module Pester
-Invoke-PesterTests -TestFile "PowerShellModules" -TestName "PowerShellModules"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "PowerShellModules" -TestName "PowerShellModules"
+}

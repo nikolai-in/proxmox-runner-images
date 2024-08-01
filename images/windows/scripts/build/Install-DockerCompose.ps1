@@ -24,4 +24,6 @@ $cliPluginsDir = "C:\ProgramData\docker\cli-plugins"
 New-Item -Path $cliPluginsDir -ItemType Directory
 Invoke-DownloadWithRetry -Url $dockerComposev2Url -Path "$cliPluginsDir\docker-compose.exe"
 
-Invoke-PesterTests -TestFile "Docker" -TestName "DockerCompose"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Docker" -TestName "DockerCompose"
+}

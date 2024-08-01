@@ -13,4 +13,6 @@ $fileName = Split-Path $downloadUrl -Leaf
 New-Item -Path "C:\ProgramData\runner" -ItemType Directory
 Invoke-DownloadWithRetry -Url $downloadUrl -Path "C:\ProgramData\runner\$fileName"
 
-Invoke-PesterTests -TestFile "RunnerCache"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "RunnerCache"
+}

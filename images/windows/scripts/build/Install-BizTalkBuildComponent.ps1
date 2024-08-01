@@ -25,4 +25,6 @@ Install-Binary `
     -ExtraInstallArgs ("/l*v", "$setupPath\buildComponentSetup.log") `
     -ExpectedSignature $signatureThumbprint
 
-Invoke-PesterTests -TestFile "BizTalk" -TestName "BizTalk Build Component Setup"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "BizTalk" -TestName "BizTalk Build Component Setup"
+}

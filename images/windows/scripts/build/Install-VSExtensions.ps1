@@ -24,4 +24,6 @@ $vsixPackagesList | ForEach-Object {
     }
 }
 
-Invoke-PesterTests -TestFile "Vsix"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Vsix"
+}

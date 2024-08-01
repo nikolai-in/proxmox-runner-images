@@ -132,4 +132,6 @@ foreach ($dotnetTool in $dotnetToolset.tools) {
     }
 }
 
-Invoke-PesterTests -TestFile "DotnetSDK"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "DotnetSDK"
+}

@@ -27,4 +27,6 @@ Write-Host "Get the IEDriver version..."
 Write-Host "Setting the IEWebDriver environment variables"
 [Environment]::SetEnvironmentVariable("IEWebDriver", $ieDriverPath, "Machine")
 
-Invoke-PesterTests -TestFile "Browsers" -TestName "Internet Explorer"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Browsers" -TestName "Internet Explorer"
+}

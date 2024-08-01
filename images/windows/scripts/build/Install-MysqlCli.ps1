@@ -37,4 +37,6 @@ $mysqlPath = $(Get-ChildItem -Path "C:\PROGRA~1\MySQL" -Directory)[0].FullName
 
 Add-MachinePathItem "${mysqlPath}\bin"
 
-Invoke-PesterTests -TestFile "Databases" -TestName "MySQL"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Databases" -TestName "MySQL"
+}

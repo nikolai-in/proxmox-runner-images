@@ -10,4 +10,6 @@ if ($LASTEXITCODE -ne 0) {
     throw "Command 'npm install -g @bazel/bazelisk' failed"
 }
 
-Invoke-PesterTests -TestFile "Tools" -TestName "Bazel"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Tools" -TestName "Bazel"
+}

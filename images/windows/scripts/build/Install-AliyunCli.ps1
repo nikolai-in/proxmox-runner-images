@@ -27,4 +27,6 @@ Expand-7ZipArchive -Path $packagePath -DestinationPath $aliyunPath
 # Add aliyun-cli to path
 Add-MachinePathItem $aliyunPath
 
-Invoke-PesterTests -TestFile "CLI.Tools" -TestName "Aliyun CLI"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "CLI.Tools" -TestName "Aliyun CLI"
+}

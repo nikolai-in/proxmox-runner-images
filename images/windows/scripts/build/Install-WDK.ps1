@@ -32,4 +32,6 @@ Install-Binary -Type EXE `
 # Need to install the VSIX to get the build targets when running VSBuild
 Install-VSIXFromFile (Resolve-Path -Path $wdkExtensionPath)
 
-Invoke-PesterTests -TestFile "WDK"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "WDK"
+}

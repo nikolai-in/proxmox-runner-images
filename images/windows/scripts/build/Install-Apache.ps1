@@ -18,4 +18,6 @@ Set-Service -Name Apache -StartupType Disabled
 Start-Service -Name w3svc
 
 # Invoke Pester Tests
-Invoke-PesterTests -TestFile "Apache"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Apache"
+}

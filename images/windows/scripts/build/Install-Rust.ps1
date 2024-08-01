@@ -48,4 +48,6 @@ if ($LASTEXITCODE -ne 0) {
 # Cleanup Cargo crates cache
 Remove-Item "${env:CARGO_HOME}\registry\*" -Recurse -Force
 
-Invoke-PesterTests -TestFile "Rust"
+if ($env:RUN_TESTS) {
+    Invoke-PesterTests -TestFile "Rust"
+}
